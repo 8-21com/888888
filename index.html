@@ -95,7 +95,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none; /* Ensures it doesn't interfere with UI */
-            opacity: 0.1; /* Subtle background effect */
+            opacity: 0.25; /* More visible */
         }
 
     </style>
@@ -192,19 +192,19 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        let runeColumns = Array(Math.floor(canvas.width / 20)).fill(0);
+        let runeColumns = Array(Math.floor(canvas.width / 30)).fill(0); // Spaced out more
 
         function drawRunes() {
             ctx.fillStyle = "rgba(13, 13, 13, 0.1)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-            ctx.font = "20px Courier New";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+            ctx.font = "26px Courier New";
 
             runeColumns.forEach((y, index) => {
                 const rune = runes[Math.floor(Math.random() * runes.length)];
-                ctx.fillText(rune, index * 20, y);
-                runeColumns[index] = y > canvas.height + Math.random() * 100 ? 0 : y + 20;
+                ctx.fillText(rune, index * 30, y);
+                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 8; // Slower falling
             });
 
             requestAnimationFrame(drawRunes);
