@@ -26,15 +26,6 @@
             font-weight: 900;
         }
 
-        /* Current block display */
-        #current-block {
-            font-size: 24px;
-            font-weight: 900;
-            color: #4D4C4C; /* Matches estimated arrival color */
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
         /* Countdown container */
         #countdown-container {
             display: inline-block;
@@ -42,6 +33,7 @@
             border: 2px solid #4D4C4C;
             border-radius: 0;
             background-color: #000000;
+            margin-top: 20px;
             width: fit-content;
         }
 
@@ -64,7 +56,6 @@
             margin-top: 10px;
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
-            text-transform: uppercase;
         }
 
         /* Footer Styling */
@@ -90,20 +81,31 @@
             background-color: #000000;
             margin-top: 10px;
             border-radius: 0;
-            transition: color 0.3s ease-in-out;
+            transition: color 0.3s ease-in-out; /* Smooth transition */
         }
 
         #footer a:hover {
-            color: #FF9900;
+            color: #FF9900; /* Turns orange on hover */
         }
+
+        /* Canvas for Elder Futhark Rune Effect */
+        #runeCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            opacity: 0.28; /* Slightly more visible */
+            z-index: -1;
+        }
+
     </style>
 </head>
 <body>
+    <canvas id="runeCanvas"></canvas>
+
     <h2>Block 888,888</h2>
-
-    <!-- Display Current Bitcoin Block -->
-    <div id="current-block">CURRENT BLOCK: Fetching...</div>
-
     <div id="countdown-container">
         <div id="countdown"></div>
     </div>
@@ -121,19 +123,102 @@
             try {
                 let response = await fetch('https://mempool.space/api/blocks/tip/height');
                 let currentHeight = await response.json();
-                document.getElementById("current-block").innerText = `CURRENT BLOCK: ${currentHeight}`;
+
+                if (!currentHeight) {
+                    console.error("Error fetching block height.");
+                    return { currentHeight: null, avgBlockTime: 600000 };
+                }
+
+                let avgBlockTime = 10 * 60 * 1000;
+
+                return { currentHeight, avgBlockTime };
             } catch (error) {
                 console.error("Error fetching block data:", error);
-                document.getElementById("current-block").innerText = "CURRENT BLOCK: ERROR";
+                return { currentHeight: null, avgBlockTime: 600000 };
             }
         }
 
         async function updateCountdown() {
-            await fetchBlockData();
-            setInterval(fetchBlockData, 30000); // Update every 30 seconds
+            const targetBlock = 888888;
+
+            let { currentHeight, avgBlockTime } = await fetchBlockData();
+            if (currentHeight === null) {
+                document.getElementById("countdown").innerHTML = "Error fetching data";
+                document.getElementById("estimated-arrival").innerHTML = "ESTIMATED ARRIVAL: Unknown";
+                return;
+            }
+
+            let blocksLeft = targetBlock - currentHeight;
+            let estimatedTimeLeft = blocksLeft * avgBlockTime;
+            let targetDate = new Date(Date.now() + estimatedTimeLeft);
+
+            let options = { year: 'numeric', month: 'long', day: 'numeric' };
+            let estimatedArrivalDate = targetDate.toLocaleDateString('en-US', options);
+            document.getElementById("estimated-arrival").innerHTML = `ESTIMATED ARRIVAL: ${estimatedArrivalDate}`;
+
+            function updateTimer() {
+                let now = new Date();
+                let timeDifference = targetDate - now;
+
+                if (timeDifference < 0) {
+                    document.getElementById("countdown").innerHTML = "Block 888,888 reached!";
+                    document.getElementById("estimated-arrival").innerHTML = "Block 888,888 has arrived!";
+                    return;
+                }
+
+                let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
+                let seconds = Math.floor((timeDifference / 1000) % 60);
+
+                document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                setTimeout(updateTimer, 1000);
+            }
+
+            updateTimer();
         }
 
         document.addEventListener("DOMContentLoaded", updateCountdown);
+
+        /* Falling Runes Effect */
+        const runes = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ".split("");
+        const canvas = document.getElementById("runeCanvas");
+        const ctx = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        let runeSymbols = [];
+        for (let i = 0; i < 50; i++) {
+            runeSymbols.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                rune: runes[Math.floor(Math.random() * runes.length)],
+                speed: Math.random() * 1.5 + 0.5,
+            });
+        }
+
+        function drawRunes() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
+            ctx.font = "30px Courier New";
+
+            runeSymbols.forEach((runeObj) => {
+                ctx.fillText(runeObj.rune, runeObj.x, runeObj.y);
+                runeObj.y += runeObj.speed;
+                if (runeObj.y > canvas.height) runeObj.y = 0;
+            });
+
+            requestAnimationFrame(drawRunes);
+        }
+
+        drawRunes();
     </script>
 </body>
 </html>
