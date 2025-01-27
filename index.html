@@ -28,18 +28,18 @@
         /* Countdown container with a visible border and sharp edges */
         #countdown-container {
             display: inline-block;
-            padding: 20px; /* Adequate padding inside the box */
-            border: 2px solid #4D4C4C; /* 2px solid box with specified color */
-            border-radius: 0; /* Ensures sharp edges */
-            background-color: #0D0D0D; /* Background blends with the page */
-            margin-top: 20px; /* Adds spacing */
-            width: fit-content; /* Fits to content size */
+            padding: 20px;
+            border: 2px solid #4D4C4C;
+            border-radius: 0;
+            background-color: #0D0D0D;
+            margin-top: 20px;
+            width: fit-content;
         }
 
         /* Countdown display */
         #countdown {
             font-size: 42px;
-            font-weight: 900; /* Bold font */
+            font-weight: 900;
             color: #FF9900;
             padding: 10px;
             display: inline-block;
@@ -51,7 +51,7 @@
         #countdown:empty::before {
             content: "Loading...";
             font-size: 24px;
-            font-weight: 900; /* Strongest bold */
+            font-weight: 900;
             color: #888888;
             display: block;
             padding: 10px;
@@ -94,10 +94,10 @@
                 }
 
                 let currentHeight = blocks[0].height;
-                
-                // Calculate the average block time over the last 10 blocks
-                let totalTime = (blocks[0].timestamp - blocks[9].timestamp) * 1000;
-                let avgBlockTime = totalTime / 9; // Avg time between blocks
+
+                // Calculate the average block time using the last 10 blocks
+                let totalTime = (blocks[0].timestamp - blocks[9].timestamp) * 1000; // Convert to milliseconds
+                let avgBlockTime = totalTime / 9; // Average block time
 
                 return { currentHeight, avgBlockTime };
             } catch (error) {
@@ -116,8 +116,8 @@
             }
 
             let blocksLeft = targetBlock - currentHeight;
-            let estimatedTimeLeft = blocksLeft * avgBlockTime;
-            let targetDate = new Date(Date.now() + estimatedTimeLeft);
+            let estimatedTimeLeft = blocksLeft * avgBlockTime; // Time left in milliseconds
+            let targetDate = new Date(Date.now() + estimatedTimeLeft); // Future timestamp
 
             function updateTimer() {
                 let now = new Date();
