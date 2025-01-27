@@ -10,7 +10,7 @@
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin-top: 50px;
-            background-color: #000000; /* True black */
+            background-color: #000000;
             color: #FFFFFF;
             overflow-x: hidden;
         }
@@ -26,6 +26,50 @@
             font-weight: 900;
         }
 
+        /* 3D Cube Container */
+        .cube-container {
+            width: 100px;
+            height: 100px;
+            perspective: 600px;
+            margin: auto;
+            margin-bottom: 20px;
+        }
+
+        /* 3D Cube */
+        .cube {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 1s ease-in-out;
+        }
+
+        /* Cube Faces */
+        .cube-face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(77, 76, 76, 0.2); /* Transparent Grey */
+            border: 2px solid #4D4C4C; /* Same as box border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: #FF9900;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Cube Face Positions */
+        .front  { transform: translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); }
+
         /* Countdown container */
         #countdown-container {
             display: inline-block;
@@ -33,7 +77,6 @@
             border: 2px solid #4D4C4C;
             border-radius: 0;
             background-color: #000000;
-            margin-top: 20px;
             width: fit-content;
         }
 
@@ -74,38 +117,37 @@
         /* Footer link box */
         #footer a {
             text-decoration: none;
-            color: #4D4C4C; /* Matches border color */
+            color: #4D4C4C;
             display: inline-block;
             padding: 5px 15px;
             border: 2px solid #4D4C4C;
             background-color: #000000;
             margin-top: 10px;
             border-radius: 0;
-            transition: color 0.3s ease-in-out; /* Smooth transition */
+            transition: color 0.3s ease-in-out;
         }
 
         #footer a:hover {
-            color: #FF9900; /* Turns orange on hover */
+            color: #FF9900;
         }
-
-        /* Canvas for Elder Futhark Rune Effect */
-        #runeCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            opacity: 0.28; /* Slightly more visible */
-            z-index: -1;
-        }
-
     </style>
 </head>
 <body>
-    <canvas id="runeCanvas"></canvas>
 
     <h2>Block 888,888</h2>
+
+    <!-- 3D Cube Displaying Current Block -->
+    <div class="cube-container">
+        <div class="cube" id="blockCube">
+            <div class="cube-face front" id="current-block">Fetching...</div>
+            <div class="cube-face back"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face bottom"></div>
+        </div>
+    </div>
+
     <div id="countdown-container">
         <div id="countdown"></div>
     </div>
@@ -129,8 +171,20 @@
                     return { currentHeight: null, avgBlockTime: 600000 };
                 }
 
-                let avgBlockTime = 10 * 60 * 1000;
+                // Get cube and update the current block
+                let cube = document.getElementById("blockCube");
+                let blockDisplay = document.getElementById("current-block");
 
+                if (blockDisplay.innerText !== `Block ${currentHeight}`) {
+                    // Rotate cube on update
+                    cube.style.transform = `rotateY(${Math.random() * 360}deg) rotateX(${Math.random() * 360}deg)`;
+                    setTimeout(() => {
+                        blockDisplay.innerText = `Block ${currentHeight}`;
+                        cube.style.transform = "rotateY(0deg) rotateX(0deg)";
+                    }, 1000);
+                }
+
+                let avgBlockTime = 10 * 60 * 1000;
                 return { currentHeight, avgBlockTime };
             } catch (error) {
                 console.error("Error fetching block data:", error);
@@ -156,69 +210,10 @@
             let estimatedArrivalDate = targetDate.toLocaleDateString('en-US', options);
             document.getElementById("estimated-arrival").innerHTML = `ESTIMATED ARRIVAL: ${estimatedArrivalDate}`;
 
-            function updateTimer() {
-                let now = new Date();
-                let timeDifference = targetDate - now;
-
-                if (timeDifference < 0) {
-                    document.getElementById("countdown").innerHTML = "Block 888,888 reached!";
-                    document.getElementById("estimated-arrival").innerHTML = "Block 888,888 has arrived!";
-                    return;
-                }
-
-                let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-                let hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
-                let minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
-                let seconds = Math.floor((timeDifference / 1000) % 60);
-
-                document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-                setTimeout(updateTimer, 1000);
-            }
-
-            updateTimer();
+            setInterval(fetchBlockData, 30000);
         }
 
         document.addEventListener("DOMContentLoaded", updateCountdown);
-
-        /* Falling Runes Effect */
-        const runes = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ".split("");
-        const canvas = document.getElementById("runeCanvas");
-        const ctx = canvas.getContext("2d");
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener("resize", resizeCanvas);
-        resizeCanvas();
-
-        let runeSymbols = [];
-        for (let i = 0; i < 50; i++) {
-            runeSymbols.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                rune: runes[Math.floor(Math.random() * runes.length)],
-                speed: Math.random() * 1.5 + 0.5,
-            });
-        }
-
-        function drawRunes() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
-            ctx.font = "30px Courier New";
-
-            runeSymbols.forEach((runeObj) => {
-                ctx.fillText(runeObj.rune, runeObj.x, runeObj.y);
-                runeObj.y += runeObj.speed;
-                if (runeObj.y > canvas.height) runeObj.y = 0;
-            });
-
-            requestAnimationFrame(drawRunes);
-        }
-
-        drawRunes();
     </script>
 </body>
 </html>
