@@ -69,27 +69,41 @@
     <div id="countdown"></div>
 
     <script>
-        async function fetchBlockHeight() {
+        async function fetchBlockData() {
             try {
-                let response = await fetch('https://mempool.space/api/blocks/tip/height');
-                let currentHeight = await response.json();
-                return currentHeight;
+                let response = await fetch('https://mempool.space/api/blocks');
+                let blocks = await response.json();
+
+                if (!blocks || blocks.length < 2) {
+                    console.error("Not enough block data.");
+                    return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
+                }
+
+                let currentHeight = blocks[0].height;
+                let latestBlockTime = new Date(blocks[0].timestamp * 1000);
+                let previousBlockTime = new Date(blocks[1].timestamp * 1000);
+
+                // Calculate actual time between last two blocks
+                let avgBlockTime = latestBlockTime - previousBlockTime;
+
+                return { currentHeight, avgBlockTime };
             } catch (error) {
-                console.error("Error fetching block height:", error);
-                document.getElementById("countdown").innerHTML = "Error fetching data";
-                return null;
+                console.error("Error fetching block data:", error);
+                return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
             }
         }
 
         async function updateCountdown() {
             const targetBlock = 888888;
-            const averageBlockTime = 10 * 60 * 1000; // 10 minutes per block
 
-            let currentHeight = await fetchBlockHeight();
-            if (currentHeight === null) return;
+            let { currentHeight, avgBlockTime } = await fetchBlockData();
+            if (currentHeight === null) {
+                document.getElementById("countdown").innerHTML = "Error fetching data";
+                return;
+            }
 
             let blocksLeft = targetBlock - currentHeight;
-            let estimatedTimeLeft = blocksLeft * averageBlockTime;
+            let estimatedTimeLeft = blocksLeft * avgBlockTime;
             let targetDate = new Date(Date.now() + estimatedTimeLeft);
 
             function updateTimer() {
