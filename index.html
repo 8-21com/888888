@@ -115,5 +115,25 @@
         <div>UNOFFICIAL COUNTDOWN</div>
         <a href="https://docs.8-21.com/the-history-of-rsic/project-updates#block-888-888" target="_self">8-21.com</a>
     </div>
+
+    <script>
+        async function fetchBlockData() {
+            try {
+                let response = await fetch('https://mempool.space/api/blocks/tip/height');
+                let currentHeight = await response.json();
+                document.getElementById("current-block").innerText = `CURRENT BLOCK: ${currentHeight}`;
+            } catch (error) {
+                console.error("Error fetching block data:", error);
+                document.getElementById("current-block").innerText = "CURRENT BLOCK: ERROR";
+            }
+        }
+
+        async function updateCountdown() {
+            await fetchBlockData();
+            setInterval(fetchBlockData, 30000); // Update every 30 seconds
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCountdown);
+    </script>
 </body>
 </html>
