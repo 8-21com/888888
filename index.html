@@ -25,13 +25,15 @@
             font-weight: 900; /* Strongest bold weight */
         }
 
-        /* Countdown container with a border */
+        /* Countdown container with a visible border and sharp edges */
         #countdown-container {
             display: inline-block;
             padding: 20px; /* Adequate padding inside the box */
             border: 2px solid #4D4C4C; /* 2px solid box with specified color */
-            border-radius: 8px; /* Slightly rounded corners */
-            background: transparent; /* No background fill */
+            border-radius: 0; /* Ensures sharp edges */
+            background-color: #0D0D0D; /* Background blends with the page */
+            margin-top: 20px; /* Adds spacing */
+            width: fit-content; /* Fits to content size */
         }
 
         /* Countdown display */
@@ -83,20 +85,19 @@
     <script>
         async function fetchBlockData() {
             try {
-                let response = await fetch('https://mempool.space/api/blocks');
+                let response = await fetch('https://mempool.space/api/blocks/10'); // Fetch last 10 blocks
                 let blocks = await response.json();
 
-                if (!blocks || blocks.length < 2) {
+                if (!blocks || blocks.length < 10) {
                     console.error("Not enough block data.");
                     return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
                 }
 
                 let currentHeight = blocks[0].height;
-                let latestBlockTime = new Date(blocks[0].timestamp * 1000);
-                let previousBlockTime = new Date(blocks[1].timestamp * 1000);
-
-                // Calculate actual time between last two blocks
-                let avgBlockTime = latestBlockTime - previousBlockTime;
+                
+                // Calculate the average block time over the last 10 blocks
+                let totalTime = (blocks[0].timestamp - blocks[9].timestamp) * 1000;
+                let avgBlockTime = totalTime / 9; // Avg time between blocks
 
                 return { currentHeight, avgBlockTime };
             } catch (error) {
