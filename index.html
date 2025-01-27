@@ -51,10 +51,35 @@
         #estimated-arrival {
             font-size: 16px; /* 10% smaller than before */
             font-weight: 900; /* Bold */
-            color: #4D4C4C; /* Now same as border color */
+            color: #4D4C4C; /* Matches border color */
             margin-top: 10px;
             text-align: center;
             font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Footer Styling */
+        #footer {
+            font-size: 16px; /* Same as estimated arrival text */
+            font-weight: 900; /* Bold */
+            color: #CCCCCC; /* Same color as title */
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            width: 100%;
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+        }
+
+        #footer a {
+            text-decoration: none;
+            color: #CCCCCC; /* Same as title */
+        }
+
+        #footer a:hover {
+            text-decoration: underline;
         }
 
         /* "Loading..." Styling */
@@ -93,6 +118,12 @@
     </div>
 
     <div id="estimated-arrival">ESTIMATED ARRIVAL: Calculating...</div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <div>UNOFFICIAL COUNTDOWN</div>
+        <div><a href="https://docs.8-21.com/the-history-of-rsic/project-updates#block-888-888" target="_blank">8-21.com</a></div>
+    </div>
 
     <script>
         async function fetchBlockData() {
