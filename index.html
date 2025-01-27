@@ -95,7 +95,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            opacity: 0.12; /* Subtle but visible */
+            opacity: 0.18; /* Slightly more visible */
             z-index: -1;
         }
 
@@ -193,17 +193,17 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        let runeColumns = Array(Math.floor(canvas.width / 40)).fill(0);
+        let runeColumns = Array(Math.floor(canvas.width / 50)).fill(0); // More space between runes
 
         function drawRunes() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
-            ctx.font = "28px Courier New";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+            ctx.font = "30px Courier New"; // Larger runes
 
             runeColumns.forEach((y, index) => {
                 const rune = runes[Math.floor(Math.random() * runes.length)];
-                ctx.fillText(rune, index * 40, y);
-                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 4; // Much slower
+                ctx.fillText(rune, index * 50, y);
+                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 6; // Slightly faster than before
             });
 
             requestAnimationFrame(drawRunes);
