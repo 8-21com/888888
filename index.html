@@ -114,7 +114,7 @@
     <!-- Centered Footer -->
     <div id="footer">
         <div>UNOFFICIAL COUNTDOWN</div>
-        <a href="https://docs.8-21.com/the-history-of-rsic/project-updates#block-888-888" target="_blank">8-21.com</a>
+        <a href="https://docs.8-21.com/the-history-of-rsic/project-updates#block-888-888" target="_self">8-21.com</a>
     </div>
 
     <script>
@@ -203,7 +203,7 @@
             runeColumns.forEach((y, index) => {
                 const rune = runes[Math.floor(Math.random() * runes.length)];
                 ctx.fillText(rune, index * 40, y);
-                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 8; // Faster falling
+                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 3; // Much slower falling
             });
 
             requestAnimationFrame(drawRunes);
