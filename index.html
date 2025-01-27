@@ -10,36 +10,36 @@
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin-top: 50px;
-            background-color: #0D0D0D;
+            background-color: #000000; /* True black */
             color: #FFFFFF;
-            overflow-x: hidden; /* Prevents horizontal scrolling */
+            overflow-x: hidden;
         }
 
-        /* Title styling - Reduced size & changed color */
+        /* Title styling */
         h2 {
-            font-size: 54px; /* 25% smaller */
+            font-size: 54px;
             margin-bottom: 20px;
-            color: #CCCCCC; /* Light gray */
+            color: #CCCCCC;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-family: 'Courier New', Courier, monospace;
-            font-weight: 900; /* Strongest bold weight */
+            font-weight: 900;
         }
 
-        /* Countdown container with a visible border and sharp edges */
+        /* Countdown container */
         #countdown-container {
             display: inline-block;
             padding: 20px;
             border: 2px solid #4D4C4C;
             border-radius: 0;
-            background-color: #0D0D0D;
+            background-color: #000000;
             margin-top: 20px;
             width: fit-content;
         }
 
-        /* Countdown display - Reduced size */
+        /* Countdown display */
         #countdown {
-            font-size: 32px; /* 25% smaller */
+            font-size: 32px;
             font-weight: 900;
             color: #FF9900;
             padding: 10px;
@@ -58,11 +58,11 @@
             font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Footer Styling - Centered */
+        /* Footer Styling */
         #footer {
             font-size: 18px;
             font-weight: 900;
-            color: #AAAAAA; /* Slightly darker */
+            color: #AAAAAA;
             margin-top: 50px;
             text-align: center;
             position: absolute;
@@ -78,7 +78,7 @@
             display: inline-block;
             padding: 5px 15px;
             border: 2px solid #4D4C4C;
-            background-color: #0D0D0D;
+            background-color: #000000;
             margin-top: 10px;
             border-radius: 0;
         }
@@ -94,14 +94,15 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            pointer-events: none; /* Ensures it doesn't interfere with UI */
-            opacity: 0.25; /* More visible */
+            pointer-events: none;
+            opacity: 0.12; /* Subtle but visible */
+            z-index: -1;
         }
 
     </style>
 </head>
 <body>
-    <canvas id="runeCanvas"></canvas> <!-- Background Rune Effect -->
+    <canvas id="runeCanvas"></canvas>
 
     <h2>Block 888,888</h2>
     <div id="countdown-container">
@@ -192,19 +193,17 @@
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        let runeColumns = Array(Math.floor(canvas.width / 30)).fill(0); // Spaced out more
+        let runeColumns = Array(Math.floor(canvas.width / 40)).fill(0);
 
         function drawRunes() {
-            ctx.fillStyle = "rgba(13, 13, 13, 0.1)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
-            ctx.font = "26px Courier New";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+            ctx.font = "28px Courier New";
 
             runeColumns.forEach((y, index) => {
                 const rune = runes[Math.floor(Math.random() * runes.length)];
-                ctx.fillText(rune, index * 30, y);
-                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 8; // Slower falling
+                ctx.fillText(rune, index * 40, y);
+                runeColumns[index] = y > canvas.height + Math.random() * 200 ? 0 : y + 4; // Much slower
             });
 
             requestAnimationFrame(drawRunes);
