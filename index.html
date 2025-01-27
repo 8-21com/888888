@@ -25,15 +25,22 @@
             font-weight: 900; /* Strongest bold weight */
         }
 
+        /* Countdown container with a border */
+        #countdown-container {
+            display: inline-block;
+            padding: 20px; /* Adequate padding inside the box */
+            border: 2px solid #4D4C4C; /* 2px solid box with specified color */
+            border-radius: 8px; /* Slightly rounded corners */
+            background: transparent; /* No background fill */
+        }
+
         /* Countdown display */
         #countdown {
             font-size: 42px;
-            font-weight: 900; /* Ensuring it's bold */
+            font-weight: 900; /* Bold font */
             color: #FF9900;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 10px;
             display: inline-block;
-            background: transparent;
             text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
             font-family: 'Courier New', Courier, monospace;
         }
@@ -46,7 +53,6 @@
             color: #888888;
             display: block;
             padding: 10px;
-            background: transparent;
             font-family: 'Courier New', Courier, monospace;
         }
 
@@ -70,7 +76,9 @@
 </head>
 <body>
     <h2>Block 888,888 Countdown</h2>
-    <div id="countdown"></div>
+    <div id="countdown-container">
+        <div id="countdown"></div>
+    </div>
 
     <script>
         async function fetchBlockData() {
