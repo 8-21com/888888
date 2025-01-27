@@ -77,7 +77,7 @@
     </style>
 </head>
 <body>
-    <h2>Block 888,888 Countdown</h2>
+    <h2>Block 888,888</h2>
     <div id="countdown-container">
         <div id="countdown"></div>
     </div>
@@ -85,19 +85,16 @@
     <script>
         async function fetchBlockData() {
             try {
-                let response = await fetch('https://mempool.space/api/blocks/10'); // Fetch last 10 blocks
-                let blocks = await response.json();
+                let response = await fetch('https://mempool.space/api/blocks/tip/height');
+                let currentHeight = await response.json();
 
-                if (!blocks || blocks.length < 10) {
-                    console.error("Not enough block data.");
+                if (!currentHeight) {
+                    console.error("Error fetching block height.");
                     return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
                 }
 
-                let currentHeight = blocks[0].height;
-
-                // Calculate the average block time using the last 10 blocks
-                let totalTime = (blocks[0].timestamp - blocks[9].timestamp) * 1000; // Convert to milliseconds
-                let avgBlockTime = totalTime / 9; // Average block time
+                // Use the standard 10-minute block time for calculation
+                let avgBlockTime = 10 * 60 * 1000; // 10 minutes in milliseconds
 
                 return { currentHeight, avgBlockTime };
             } catch (error) {
