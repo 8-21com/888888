@@ -88,7 +88,7 @@
             background-color: #000000;
             margin-top: 10px;
             border-radius: 0;
-            transition: color 0.3s ease-in-out;
+            transition: color 0.3s ease-in-out; /* Smooth transition */
         }
 
         #footer a:hover {
@@ -170,7 +170,27 @@
             let estimatedArrivalDate = targetDate.toLocaleDateString('en-US', options);
             document.getElementById("estimated-arrival").innerHTML = `ESTIMATED ARRIVAL: ${estimatedArrivalDate}`;
 
-            setInterval(fetchBlockData, 30000);
+            function updateTimer() {
+                let now = new Date();
+                let timeDifference = targetDate - now;
+
+                if (timeDifference < 0) {
+                    document.getElementById("countdown").innerHTML = "Block 888,888 reached!";
+                    document.getElementById("estimated-arrival").innerHTML = "Block 888,888 has arrived!";
+                    return;
+                }
+
+                let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
+                let seconds = Math.floor((timeDifference / 1000) % 60);
+
+                document.getElementById("countdown").innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                setTimeout(updateTimer, 1000);
+            }
+
+            updateTimer();
         }
 
         document.addEventListener("DOMContentLoaded", () => {
