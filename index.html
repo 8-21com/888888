@@ -81,10 +81,11 @@
             background-color: #000000;
             margin-top: 10px;
             border-radius: 0;
+            transition: color 0.3s ease-in-out; /* Smooth transition */
         }
 
         #footer a:hover {
-            color: #FF9900;
+            color: #FF9900; /* Turns orange on hover */
         }
 
         /* Canvas for Elder Futhark Rune Effect */
@@ -95,7 +96,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            opacity: 0.22; /* Slightly more visible */
+            opacity: 0.28; /* Slightly more visible */
             z-index: -1;
         }
 
@@ -199,13 +200,13 @@
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 rune: runes[Math.floor(Math.random() * runes.length)],
-                speed: Math.random() * 1.5 + 0.5, // Slightly different speeds for each rune
+                speed: Math.random() * 1.5 + 0.5,
             });
         }
 
         function drawRunes() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.22)";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.28)";
             ctx.font = "30px Courier New";
 
             runeSymbols.forEach((runeObj) => {
