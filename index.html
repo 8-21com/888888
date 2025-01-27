@@ -1,61 +1,139 @@
-/* Dark theme background */
-body {
-    font-family: 'Courier New', Courier, monospace;
-    text-align: center;
-    margin-top: 50px;
-    background-color: #0D0D0D;
-    color: #FFFFFF;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block 888,888 Countdown</title>
+    <style>
+        /* Dark theme background */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #0D0D0D;
+            color: #FFFFFF;
+        }
 
-/* Title styling */
-h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-}
+        /* Title styling */
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 700; /* Ensuring it's bold */
+        }
 
-/* Countdown display */
-#countdown {
-    font-size: 36px;
-    font-weight: bold;
-    color: #FF9900;
-    padding: 15px;
-    border-radius: 8px;
-    display: inline-block;
-    background: transparent;
-    text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
-    font-family: 'Courier New', Courier, monospace;
-}
+        /* Countdown display */
+        #countdown {
+            font-size: 40px;
+            font-weight: 700; /* Bold font */
+            color: #FF9900;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-block;
+            background: transparent;
+            text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-/* "Loading..." Styling */
-#countdown:empty::before {
-    content: "Loading...";
-    font-size: 24px;
-    font-weight: bold;
-    color: #888888;
-    display: block;
-    padding: 10px;
-    background: transparent;
-    font-family: 'Courier New', Courier, monospace;
-}
+        /* "Loading..." Styling */
+        #countdown:empty::before {
+            content: "Loading...";
+            font-size: 24px;
+            font-weight: 700; /* Bold for consistency */
+            color: #888888;
+            display: block;
+            padding: 10px;
+            background: transparent;
+            font-family: 'Courier New', Courier, monospace;
+        }
 
-/* Add subtle glow animation for countdown */
-@keyframes pulse {
-    0% {
-        text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
-    }
-    50% {
-        text-shadow: 0 0 15px rgba(255, 153, 0, 0.8);
-    }
-    100% {
-        text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
-    }
-}
+        /* Add subtle glow animation for countdown */
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 15px rgba(255, 153, 0, 0.8);
+            }
+            100% {
+                text-shadow: 0 0 5px rgba(255, 153, 0, 0.5);
+            }
+        }
 
-#countdown {
-    animation: pulse 1.5s infinite alternate;
-}
+        #countdown {
+            animation: pulse 1.5s infinite alternate;
+        }
+    </style>
+</head>
+<body>
+    <h2>Block 888,888 Countdown</h2>
+    <div id="countdown"></div>
+
+    <script>
+        async function fetchBlockData() {
+            try {
+                let response = await fetch('https://mempool.space/api/blocks');
+                let blocks = await response.json();
+
+                if (!blocks || blocks.length < 2) {
+                    console.error("Not enough block data.");
+                    return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
+                }
+
+                let currentHeight = blocks[0].height;
+                let latestBlockTime = new Date(blocks[0].timestamp * 1000);
+                let previousBlockTime = new Date(blocks[1].timestamp * 1000);
+
+                // Calculate actual time between last two blocks
+                let avgBlockTime = latestBlockTime - previousBlockTime;
+
+                return { currentHeight, avgBlockTime };
+            } catch (error) {
+                console.error("Error fetching block data:", error);
+                return { currentHeight: null, avgBlockTime: 600000 }; // Default to 10 min
+            }
+        }
+
+        async function updateCountdown() {
+            const targetBlock = 888888;
+
+            let { currentHeight, avgBlockTime } = await fetchBlockData();
+            if (currentHeight === null) {
+                document.getElementById("countdown").innerHTML = "Error fetching data";
+                return;
+            }
+
+            let blocksLeft = targetBlock - currentHeight;
+            let estimatedTimeLeft = blocksLeft * avgBlockTime;
+            let targetDate = new Date(Date.now() + estimatedTimeLeft);
+
+            function updateTimer() {
+                let now = new Date();
+                let timeDifference = targetDate - now;
+
+                if (timeDifference < 0) {
+                    document.getElementById("countdown").innerHTML = "Block 888,888 reached!";
+                    return;
+                }
+
+                let days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                let hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
+                let seconds = Math.floor((timeDifference / 1000) % 60);
+
+                document.getElementById("countdown").innerHTML =
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                setTimeout(updateTimer, 1000);
+            }
+
+            updateTimer();
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCountdown);
+    </script>
+</body>
+</html>
